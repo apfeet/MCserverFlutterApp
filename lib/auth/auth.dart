@@ -1,5 +1,6 @@
 import "package:appwrite/appwrite.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
+// ignore_for_file: avoid_print
 
 Client client = Client()
     .setEndpoint(dotenv.env['END_POINT'] ?? 'Endpoint not found')
@@ -7,18 +8,30 @@ Client client = Client()
     .setSelfSigned(status: true);
 final account = Account(client);
 
-Future<String> createAccount(String email, String password) async {
+Future<bool> createAccount(String email, String password) async {
   try {
-    final user = await account.create(
+    await account.create(
       userId: ID.unique(),
       email: email,
       password: password,
     );
-    return "success";
-  } catch (e) {
+    print('----------');
+    print('Account Created');
+    print('----------');
+    return true;
+  } on AppwriteException catch (e) {
+    print('----------');
+    print('Error cant create the account');
+    print('----------');
     print(e.toString());
-    return "error";
+    throw AuthException(e.toString());
   }
+}
+
+class AuthException implements Exception {
+  final String message;
+
+  AuthException(this.message);
 }
 
 Future loginUser(String email, String password) async {

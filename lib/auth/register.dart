@@ -35,15 +35,29 @@ class _RegisterState extends State<Register> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                  onPressed: () async {
+                onPressed: () async {
+                  try {
                     await createAccount(email.text, password.text);
+                    // ignore: use_build_context_synchronously
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Login(),
-                        ));
-                  },
-                  child: Text('invia')),
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Login(),
+                      ),
+                    );
+                  } catch (e) {
+                    if (e is AuthException) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text("Errore nella registrazione ${e.message}"),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Text('Invia'),
+              ),
               SizedBox(
                 width: 25,
               ),
