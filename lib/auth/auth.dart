@@ -24,14 +24,15 @@ Future<bool> createAccount(String email, String password) async {
     print('Error cant create the account');
     print('----------');
     print(e.toString());
-    throw AuthException(e.toString());
+    throw AuthException(e.code, e.toString());
   }
 }
 
 class AuthException implements Exception {
+  final int? errorCode;
   final String message;
 
-  AuthException(this.message);
+  AuthException(this.errorCode, this.message);
 }
 
 Future loginUser(String email, String password) async {

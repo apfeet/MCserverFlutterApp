@@ -1,5 +1,4 @@
 import "package:demo/auth/auth.dart";
-import "package:demo/auth/login.dart";
 import "package:demo/auth/register.dart";
 import "package:demo/home/home.dart";
 import "package:flutter/material.dart";
@@ -17,10 +16,10 @@ class _CheckUserAuthState extends State<CheckUserAuth> {
     checkuserlogged().then((value) {
       if (value) {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Home()));
+            context, MaterialPageRoute(builder: (context) => const Home()));
       } else {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Register()));
+            context, MaterialPageRoute(builder: (context) => const Register()));
       }
     });
     super.initState();
@@ -31,7 +30,7 @@ class _CheckUserAuthState extends State<CheckUserAuth> {
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
-        child: CircularProgressIndicator(),
+        child: const CircularProgressIndicator(),
       ),
     );
   }

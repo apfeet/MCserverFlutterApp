@@ -47,10 +47,18 @@ class _RegisterState extends State<Register> {
                     );
                   } catch (e) {
                     if (e is AuthException) {
+                      String errorMessage = 'Errore durante la registrazione';
+                      switch (e.errorCode) {
+                        case 400:
+                          errorMessage =
+                              'La password deve essere lunga almeno 8 caratteri';
+                        case 429:
+                          errorMessage = 'Troppe richieste Riprova piú tardi';
+                      }
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content:
-                              Text("Errore nella registrazione ${e.message}"),
+                          content: Text(errorMessage),
                         ),
                       );
                     }
