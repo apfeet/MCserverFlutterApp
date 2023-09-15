@@ -38,8 +38,9 @@ class _LoginState extends State<Login> {
                   onPressed: () async {
                     await loginUser(email.text, password.text).then((value) {
                       if (value == false) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text('errore')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Email o Password errati!')));
                       } else {
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) => Home()));

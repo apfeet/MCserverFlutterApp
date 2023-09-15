@@ -12,6 +12,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController username = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,11 @@ class _RegisterState extends State<Register> {
       ),
       body: Column(
         children: [
+          TextField(
+            controller: username,
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(hintText: 'MC username'),
+          ),
           TextField(
             controller: email,
             textAlign: TextAlign.center,
@@ -37,7 +43,8 @@ class _RegisterState extends State<Register> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    await createAccount(email.text, password.text);
+                    await createAccount(
+                        username.text, email.text, password.text);
                     // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,
@@ -62,6 +69,9 @@ class _RegisterState extends State<Register> {
                           content: Text(errorMessage),
                         ),
                       );
+                    } else {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Login()));
                     }
                   }
                 },

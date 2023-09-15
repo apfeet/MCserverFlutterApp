@@ -8,9 +8,11 @@ Client client = Client()
     .setSelfSigned(status: true);
 final account = Account(client);
 
-Future<bool> createAccount(String email, String password) async {
+Future<bool> createAccount(
+    String username, String email, String password) async {
   try {
     await account.create(
+      name: username,
       userId: ID.unique(),
       email: email,
       password: password,
