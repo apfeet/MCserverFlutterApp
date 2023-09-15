@@ -48,6 +48,7 @@ class _RegisterState extends State<Register> {
                   } catch (e) {
                     if (e is AuthException) {
                       String errorMessage = 'Errore durante la registrazione';
+                      //error ID followed by error message
                       switch (e.errorCode) {
                         case 400:
                           errorMessage =
