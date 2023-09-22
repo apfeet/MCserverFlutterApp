@@ -11,7 +11,7 @@
 👇Install my progect running by this👇
 
 ```bash
-  git clone [https://github.com/apfeet/MCserverFlutterApp]
+  git clone https://github.com/apfeet/MCserverFlutterApp
   cd MCserverFlutterApp
 
 ```
