@@ -38,6 +38,7 @@ dependencies:
   appwrite: ^11.0.0
   dotenv: ^4.1.0
   flutter_dotenv: ^5.1.0
+  mc_rcon_dart: ^1.1.0
 
 dev_dependencies:
   flutter_test:

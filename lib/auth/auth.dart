@@ -1,4 +1,5 @@
 import "package:appwrite/appwrite.dart";
+import "package:flutter/rendering.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 // ignore_for_file: avoid_print
 
@@ -43,13 +44,29 @@ Future loginUser(String email, String password) async {
     print('----------');
     print('LoggedIn');
     print('----------');
+    String userName = await GetUserName();
+    print(userName);
     return true;
   } catch (e) {
-    e.toString();
     print('----------');
     print('Error while logging in');
     print('----------');
+    print('-👇Error👇-');
+    print(e.toString());
+    print('----------');
     return false;
+  }
+}
+
+Future<String> GetUserName() async {
+  try {
+    final sessions = await account.getSession(sessionId: 'current');
+    final userResponse = await account.get();
+    final userName = userResponse.name;
+    return userName ?? "Errore";
+  } catch (e) {
+    print(e.toString());
+    return "Errore";
   }
 }
 

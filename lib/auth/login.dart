@@ -37,13 +37,15 @@ class _LoginState extends State<Login> {
               ElevatedButton(
                   onPressed: () async {
                     await loginUser(email.text, password.text).then((value) {
-                      if (value == false) {
+                      if (value) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Home()));
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('Email o Password errati!')));
-                      } else {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Home()));
                       }
                     });
                   },
