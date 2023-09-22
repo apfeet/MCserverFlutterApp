@@ -2,7 +2,7 @@
 # OxygenNetworkApp
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-**I have a Minecraft server and the project is to connect the app (present in this repository) to the server in Survival mode so that players can obtain rewards with unlockable objectives through the app (such as daily login) all via API with a plugin for mc written in JAVA**
+**I have a Minecraft server and the project is to connect the app (present in this repository) to the server in Survival mode so that players can obtain rewards with unlockable objectives through the app (such as daily login) all via RCON Protocol in a game server**
 
 
 
