@@ -44,8 +44,6 @@ Future loginUser(String email, String password) async {
     print('----------');
     print('LoggedIn');
     print('----------');
-    String userName = await GetUserName();
-    print(userName);
     return true;
   } catch (e) {
     print('----------');

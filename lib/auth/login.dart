@@ -38,10 +38,12 @@ class _LoginState extends State<Login> {
                   onPressed: () async {
                     await loginUser(email.text, password.text).then((value) {
                       if (value) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Home()));
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Home()),
+                          (route) =>
+                              false, // Rimuovi tutte le pagine precedenti dalla pila
+                        );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

@@ -2,6 +2,7 @@ import "package:demo/auth/auth.dart";
 import "package:demo/auth/register.dart";
 import "package:flutter/material.dart";
 import 'package:mc_rcon_dart/mc_rcon_dart.dart';
+import "package:flutter_dotenv/flutter_dotenv.dart";
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -9,9 +10,20 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-void clientc() async {
-  final name = await GetUserName();
-  print(name);
+int port = 0;
+
+void azione() async {
+  try {
+    String player = await GetUserName();
+    createSocket(dotenv.env['IP_ADDR'] ?? '127.0.0.1', port: 25555);
+    login("030907");
+    sendCommand("give ${player} diamond_ore");
+    close();
+  } catch (e) {
+    print('---------');
+    print(e.toString());
+    print('---------');
+  }
 }
 
 class _HomeState extends State<Home> {
@@ -41,8 +53,8 @@ class _HomeState extends State<Home> {
             width: 100,
           ),
           ElevatedButton(
-              onPressed: () {
-                clientc();
+              onPressed: () async {
+                azione();
               },
               child: const Text('Test'))
         ],
