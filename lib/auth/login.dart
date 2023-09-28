@@ -41,8 +41,7 @@ class _LoginState extends State<Login> {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (context) => const Home()),
-                          (route) =>
-                              false, // Rimuovi tutte le pagine precedenti dalla pila
+                          (route) => false,
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

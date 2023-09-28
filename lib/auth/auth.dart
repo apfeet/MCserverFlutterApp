@@ -80,4 +80,5 @@ Future checkuserlogged() async {
 
 Future logout() async {
   await account.deleteSession(sessionId: 'current');
+  return true;
 }
