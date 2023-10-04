@@ -22,7 +22,7 @@ class _SettingsState extends State<Settings> {
         ),
       ),
       body: Container(),
-      bottomSheet: const BottomBar(),
+      bottomNavigationBar: const BottomBar(),
     );
   }
 }

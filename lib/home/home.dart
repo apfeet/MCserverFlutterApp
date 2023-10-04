@@ -25,6 +25,44 @@ void azione() async {
 }
 
 class _HomeState extends State<Home> {
+  String player = "Caricamento in corso...";
+  String userID = "Caricamento in corso...";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+    _loadUserID();
+  }
+
+  Future<void> _loadUserName() async {
+    try {
+      String loadedPlayer = await GetUserName();
+      setState(() {
+        player = loadedPlayer ?? "Errore";
+      });
+    } catch (e) {
+      print(e.toString());
+      setState(() {
+        player = "Errore";
+      });
+    }
+  }
+
+  Future<void> _loadUserID() async {
+    try {
+      String loadUserID = await GetUserID();
+      setState(() {
+        userID = loadUserID ?? "Errore";
+      });
+    } catch (e) {
+      print(e.toString());
+      setState(() {
+        player = "Errore";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +76,28 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      body: Container(),
-      bottomSheet: const BottomBar(),
+      body: Stack(
+        children: [
+          Center(
+            child: Text(
+              "Bentornato $player",
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                getuser();
+              });
+            },
+            child: const Text('Clicca'),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        color: Colors.transparent,
+        child: const BottomBar(),
+      ),
     );
   }
 }
