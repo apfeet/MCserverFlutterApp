@@ -1,3 +1,4 @@
+import "package:appwrite/models.dart";
 import "package:demo/!component/bottombar.dart";
 import "package:demo/auth/auth.dart";
 import "package:flutter/material.dart";
@@ -85,13 +86,13 @@ class _HomeState extends State<Home> {
             ),
           ),
           ElevatedButton(
-            onPressed: () async {
-              setState(() {
-                getuser();
-              });
-            },
-            child: const Text('Clicca'),
-          ),
+              onPressed: () async {
+                final newRemainingTime = await getuser();
+                setState(() {
+                  remainingTime = newRemainingTime;
+                });
+              },
+              child: Text('Clicca $remainingTime')),
         ],
       ),
       bottomNavigationBar: Container(

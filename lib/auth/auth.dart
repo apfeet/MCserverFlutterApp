@@ -1,4 +1,5 @@
 import "package:appwrite/appwrite.dart";
+import "package:appwrite/models.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 // ignore_for_file: avoid_print
 
@@ -31,19 +32,21 @@ Future<bool> createAccount(
   }
 }
 
-void getuser() async {
-  try {
-    final userId = await GetUserID(); // Attendere l'ottenimento dell'ID utente
+DateTime? datenow;
+String datenow_ = 'temp';
+String remainingTime = '';
 
+Future<String> getuser() async {
+  try {
+    final userId = await GetUserID();
     Future<bool> userExist() async {
       try {
         final response = await databases.listDocuments(
-          databaseId: '651b24f731b2855ab92d',
-          collectionId: '651b253f714e3fb0c8a7',
+          databaseId: dotenv.env['DB_ID'] ?? '',
+          collectionId: dotenv.env['collectionid'] ?? '',
           queries: [Query.equal('UserID', userId)],
         );
 
-        // Verifica se ci sono documenti nel risultato
         return response.documents.isNotEmpty;
       } catch (e) {
         print(e.toString());
@@ -52,21 +55,82 @@ void getuser() async {
     }
 
     if (await userExist()) {
-      print('UserID already exists in the collection');
+      print('🪪UserID already exists in the collection🪪');
+      Document response = await databases.getDocument(
+        databaseId: dotenv.env['DB_ID'] ?? '',
+        collectionId: dotenv.env['collectionid'] ?? '',
+        documentId: userId,
+      );
+      datenow_ = response.data['timeByUser'];
+      checklastuserclick();
     } else {
+      datenow = DateTime.now().toUtc();
+      datenow_ = datenow.toString();
       await databases.createDocument(
-        databaseId: '651b24f731b2855ab92d',
-        collectionId: '651b253f714e3fb0c8a7',
-        documentId: ID.unique(),
+        databaseId: dotenv.env['DB_ID'] ?? '',
+        collectionId: dotenv.env['collectionid'] ?? '',
+        documentId: userId,
         data: {
-          'UserID': userId, // Utilizza l'ID utente ottenuto precedentemente
-          'timeByUser': 'not_setted_yet',
+          'UserID': userId,
+          'timeByUser': datenow_,
         },
       );
-      print("Document created");
+      print("📃Document created📃");
+      checklastuserclick();
     }
   } catch (e) {
     print(e.toString());
+  }
+  return await checklastuserclick();
+}
+
+Future<String> checklastuserclick() async {
+  final userId = await GetUserID();
+  Document result = await databases.getDocument(
+    databaseId: dotenv.env['DB_ID'] ?? '',
+    collectionId: dotenv.env['collectionid'] ?? '',
+    documentId: userId,
+  );
+  final lastUserTime = result.data['timeByUser'];
+  final functions = Functions(client);
+  String savedDate = 'loading';
+  try {
+    final execution = await functions.createExecution(
+        functionId: dotenv.env['FUN_ID'] ?? 'functionid not found',
+        xasync: false,
+        path: '/',
+        method: 'GET');
+    Map<String, dynamic> executionData = execution.toMap();
+    String date = executionData['responseBody'];
+    savedDate = date;
+    print('------SERVER------');
+    print('Date and time in UTC: $savedDate');
+    print('------SERVER------');
+  } catch (e) {
+    print(e.toString());
+  }
+
+  DateTime dateTimeA = DateTime.parse(savedDate).toUtc();
+  DateTime currentDateTime = DateTime.parse(datenow_).toUtc();
+
+  Duration difference = currentDateTime.difference(dateTimeA);
+  if (difference.inHours > 24) {
+    print('------🟩-----');
+    print('> di 24');
+    print('------🟩-----');
+    print('');
+    return '';
+  } else {
+    print('');
+    print('------🟥-----');
+    print('Difference of 24h: $difference');
+    print('------🟥-----');
+    print('');
+    String difference_ = difference.toString();
+    List<String> parts = difference_.split('.');
+    parts[0] = parts[0].replaceFirst('-', '');
+    String cleanedTimeString = parts[0];
+    return '$cleanedTimeString di 24H';
   }
 }
 
