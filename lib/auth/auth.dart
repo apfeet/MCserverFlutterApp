@@ -1,6 +1,7 @@
 import "package:appwrite/appwrite.dart";
 import "package:appwrite/models.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
+import 'package:mc_rcon_dart/mc_rcon_dart.dart';
 // ignore_for_file: avoid_print
 
 Client client = Client()
@@ -36,6 +37,20 @@ DateTime? datenow;
 String datenow_ = 'temp';
 String remainingTime = '';
 
+void reward_24() async {
+  try {
+    String player = await GetUserName();
+    await createSocket(dotenv.env['IP_ADDR'] ?? '127.0.0.1', port: 25555);
+    await login(dotenv.env['PASSWD'] ?? 'Password_Not_Found');
+    await sendCommand("give ${player} diamond_ore");
+    close();
+  } catch (e) {
+    print('---------');
+    print(e.toString());
+    print('---------');
+  }
+}
+
 Future<String> getuser() async {
   try {
     final userId = await GetUserID();
@@ -64,7 +79,14 @@ Future<String> getuser() async {
       datenow_ = response.data['timeByUser'];
       checklastuserclick();
     } else {
-      datenow = DateTime.now().toUtc();
+      final functions = Functions(client);
+      final execution = await functions.createExecution(
+          functionId: '651ad9e53adf8e5b3fe1',
+          xasync: false,
+          path: '/',
+          method: 'GET');
+      Map<String, dynamic> executionData = execution.toMap();
+      String datenow = await executionData['responseBody'];
       datenow_ = datenow.toString();
       await databases.createDocument(
         databaseId: dotenv.env['DB_ID'] ?? '',
@@ -92,16 +114,16 @@ Future<String> checklastuserclick() async {
     documentId: userId,
   );
   final lastUserTime = result.data['timeByUser'];
+  String savedDate = '⚙️Loading⚙️';
   final functions = Functions(client);
-  String savedDate = 'loading';
   try {
     final execution = await functions.createExecution(
-        functionId: dotenv.env['FUN_ID'] ?? 'functionid not found',
+        functionId: '651ad9e53adf8e5b3fe1',
         xasync: false,
         path: '/',
         method: 'GET');
     Map<String, dynamic> executionData = execution.toMap();
-    String date = executionData['responseBody'];
+    String date = await executionData['responseBody'];
     savedDate = date;
     print('------SERVER------');
     print('Date and time in UTC: $savedDate');
@@ -110,14 +132,17 @@ Future<String> checklastuserclick() async {
     print(e.toString());
   }
 
-  DateTime dateTimeA = DateTime.parse(savedDate).toUtc();
-  DateTime currentDateTime = DateTime.parse(datenow_).toUtc();
+  DateTime dateTimeA = DateTime.parse(savedDate);
+  DateTime currentDateTime = DateTime.parse(datenow_);
 
-  Duration difference = currentDateTime.difference(dateTimeA);
+  Duration difference = dateTimeA.difference(currentDateTime);
   if (difference.inHours > 24) {
     print('------🟩-----');
     print('> di 24');
     print('------🟩-----');
+    reward_24();
+    getuser();
+
     print('');
     return '';
   } else {
@@ -127,10 +152,7 @@ Future<String> checklastuserclick() async {
     print('------🟥-----');
     print('');
     String difference_ = difference.toString();
-    List<String> parts = difference_.split('.');
-    parts[0] = parts[0].replaceFirst('-', '');
-    String cleanedTimeString = parts[0];
-    return '$cleanedTimeString di 24H';
+    return '$difference_ di 24H';
   }
 }
 

@@ -1,9 +1,7 @@
-import "package:appwrite/models.dart";
+import "dart:async";
 import "package:demo/!component/bottombar.dart";
 import "package:demo/auth/auth.dart";
 import "package:flutter/material.dart";
-import 'package:mc_rcon_dart/mc_rcon_dart.dart';
-import "package:flutter_dotenv/flutter_dotenv.dart";
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,36 +9,43 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-void azione() async {
-  try {
-    String player = await GetUserName();
-    await createSocket(dotenv.env['IP_ADDR'] ?? '127.0.0.1', port: 25555);
-    await login(dotenv.env['PASSWD'] ?? 'Password_Not_Found');
-    await sendCommand("give ${player} diamond_ore");
-    close();
-  } catch (e) {
-    print('---------');
-    print(e.toString());
-    print('---------');
-  }
-}
-
 class _HomeState extends State<Home> {
   String player = "Caricamento in corso...";
   String userID = "Caricamento in corso...";
+  Timer? _timer;
+  int elapsedTime = 0;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    _loadUserName();
     _loadUserID();
+    _loadUserName();
+  }
+
+  void startTimer() {
+    _timer?.cancel();
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          elapsedTime = elapsedTime + 1;
+        },
+      ),
+    );
   }
 
   Future<void> _loadUserName() async {
     try {
       String loadedPlayer = await GetUserName();
       setState(() {
-        player = loadedPlayer ?? "Errore";
+        player = loadedPlayer;
       });
     } catch (e) {
       print(e.toString());
@@ -54,7 +59,7 @@ class _HomeState extends State<Home> {
     try {
       String loadUserID = await GetUserID();
       setState(() {
-        userID = loadUserID ?? "Errore";
+        userID = loadUserID;
       });
     } catch (e) {
       print(e.toString());
@@ -62,6 +67,22 @@ class _HomeState extends State<Home> {
         player = "Errore";
       });
     }
+  }
+
+  int parseTime(String timeString) {
+    var timeParts = timeString
+        .split(':')
+        .map((part) => double.parse(part.split('.')[0]))
+        .toList();
+    return ((timeParts[0] * 60 + timeParts[1]) * 60 + timeParts[2]).round();
+  }
+
+  String formatTime(int timeInSeconds) {
+    int hours = timeInSeconds ~/ 3600;
+    int minutes = (timeInSeconds % 3600) ~/ 60;
+    int seconds = timeInSeconds % 60;
+
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')} su 24H';
   }
 
   @override
@@ -79,20 +100,33 @@ class _HomeState extends State<Home> {
       ),
       body: Stack(
         children: [
-          Center(
-            child: Text(
-              "Bentornato $player",
-              style: const TextStyle(fontSize: 18),
+          Container(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Bentornato $player",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final newRemainingTimeString =
+                        await getuser(); // ritorna una stringa del tipo "ore:minuti:secondi.microsecondi"
+                    final newRemainingTime = parseTime(newRemainingTimeString);
+                    setState(() {
+                      elapsedTime = newRemainingTime;
+                    });
+                    startTimer();
+                  },
+                  child: Text('Clicca ${formatTime(elapsedTime)}'),
+                ),
+              ],
             ),
           ),
-          ElevatedButton(
-              onPressed: () async {
-                final newRemainingTime = await getuser();
-                setState(() {
-                  remainingTime = newRemainingTime;
-                });
-              },
-              child: Text('Clicca $remainingTime')),
         ],
       ),
       bottomNavigationBar: Container(
