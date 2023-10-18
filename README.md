@@ -58,5 +58,12 @@ dev_dependencies:
 
 ## Screenshots
 
+👱🏼Login Screen👱🏼
+
 ![App Screenshot](https://i2.paste.pics/458cc37da4d48506ff490095e2326e43.png?trs=34813ae051b37abebd214941acdbd9cddf2abcc9ab708cfc5254b261f14def8d)
+
+🏠Home Screen🏠
+
+![App Screenshot](https://www.bing.com/images/search?view=detailV2&insightsToken=bcid_RInhGpl.rzUGqxcxoNWLuD9SqbotqVTdP6U&FORM=ANCMS1&iss=SBIUPLOADGET#enterInsights)
+
 
