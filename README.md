@@ -64,6 +64,6 @@ dev_dependencies:
 
 🏠Home Screen🏠
 
-![App Screenshot](https://www.bing.com/images/search?view=detailV2&insightsToken=bcid_RInhGpl.rzUGqxcxoNWLuD9SqbotqVTdP6U&FORM=ANCMS1&iss=SBIUPLOADGET#enterInsights)
+![App Screenshot](https://i2.paste.pics/5deb43869c1f12046b24ed347f6a33c5.png)
 
 
