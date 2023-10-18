@@ -70,11 +70,27 @@ class _HomeState extends State<Home> {
   }
 
   int parseTime(String timeString) {
-    var timeParts = timeString
-        .split(':')
-        .map((part) => double.parse(part.split('.')[0]))
-        .toList();
-    return ((timeParts[0] * 60 + timeParts[1]) * 60 + timeParts[2]).round();
+    var timeParts = timeString.split(':');
+    if (timeParts.length < 3) {
+      print(
+          'Error: timeString "$timeString" should be in the format "hh:mm:ss"');
+      return 0;
+    }
+
+    var parsedTimeParts = timeParts.map((part) {
+      var numberPart = part.split('.')[0];
+      try {
+        return double.parse(numberPart);
+      } catch (e) {
+        print(
+            'Error parsing "$numberPart" into a double🟩this is normal if the 24h is passed');
+        return 0.0;
+      }
+    }).toList();
+
+    return ((parsedTimeParts[0] * 60 + parsedTimeParts[1]) * 60 +
+            parsedTimeParts[2])
+        .round();
   }
 
   String formatTime(int timeInSeconds) {
@@ -114,8 +130,7 @@ class _HomeState extends State<Home> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    final newRemainingTimeString =
-                        await getuser(); // ritorna una stringa del tipo "ore:minuti:secondi.microsecondi"
+                    final newRemainingTimeString = await getuser();
                     final newRemainingTime = parseTime(newRemainingTimeString);
                     setState(() {
                       elapsedTime = newRemainingTime;
@@ -124,6 +139,11 @@ class _HomeState extends State<Home> {
                   },
                   child: Text('Clicca ${formatTime(elapsedTime)}'),
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      givereward();
+                    },
+                    child: Text('debug'))
               ],
             ),
           ),

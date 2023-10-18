@@ -10,6 +10,7 @@ Client client = Client()
     .setSelfSigned(status: true);
 final account = Account(client);
 final databases = Databases(client);
+Functions functions = Functions(client);
 
 Future<bool> createAccount(
     String username, String email, String password) async {
@@ -36,18 +37,40 @@ Future<bool> createAccount(
 DateTime? datenow;
 String datenow_ = 'temp';
 String remainingTime = '';
+void reward_24(String playerName) async {
+  await createSocket(dotenv.env['IP_ADDR'] ?? '127.0.0.1', port: 25555);
+  login(dotenv.env['PASSWD'] ?? 'Password_Not_Found');
+  sendCommand("give $playerName diamond_ore");
+  close();
+}
 
-void reward_24() async {
+void givereward() async {
+  String playerName = await GetUserName();
+  var data = {
+    'key1': playerName,
+  };
+
   try {
-    String player = await GetUserName();
-    await createSocket(dotenv.env['IP_ADDR'] ?? '127.0.0.1', port: 25555);
-    await login(dotenv.env['PASSWD'] ?? 'Password_Not_Found');
-    await sendCommand("give ${player} diamond_ore");
-    close();
+    final result = await functions.createExecution(
+      functionId: dotenv.env['isplayer_online'] ?? 'function id not found',
+      xasync: false,
+      path: '/',
+      method: 'GET',
+      headers: data,
+    );
+
+    if (result != null) {
+      String response = result.responseBody;
+      if (response.contains('False')) {
+        print('La risposta é "False"');
+      } else {
+        print('La risposta é "True"');
+      }
+    } else {
+      print('La risposta è null');
+    }
   } catch (e) {
-    print('---------');
-    print(e.toString());
-    print('---------');
+    print('Errore: $e');
   }
 }
 
@@ -61,7 +84,6 @@ Future<String> getuser() async {
           collectionId: dotenv.env['collectionid'] ?? '',
           queries: [Query.equal('UserID', userId)],
         );
-
         return response.documents.isNotEmpty;
       } catch (e) {
         print(e.toString());
@@ -69,15 +91,16 @@ Future<String> getuser() async {
       }
     }
 
-    if (await userExist()) {
+    if (await userExist() != false) {
+      print('');
       print('🪪UserID already exists in the collection🪪');
+      print('');
       Document response = await databases.getDocument(
         databaseId: dotenv.env['DB_ID'] ?? '',
         collectionId: dotenv.env['collectionid'] ?? '',
         documentId: userId,
       );
       datenow_ = response.data['timeByUser'];
-      checklastuserclick();
     } else {
       final functions = Functions(client);
       final execution = await functions.createExecution(
@@ -97,8 +120,8 @@ Future<String> getuser() async {
           'timeByUser': datenow_,
         },
       );
-      print("📃Document created📃");
       checklastuserclick();
+      print("📃Document created📃");
     }
   } catch (e) {
     print(e.toString());
@@ -125,9 +148,9 @@ Future<String> checklastuserclick() async {
     Map<String, dynamic> executionData = execution.toMap();
     String date = await executionData['responseBody'];
     savedDate = date;
-    print('------SERVER------');
+    print('------🖥️SERVER🖥️------');
     print('Date and time in UTC: $savedDate');
-    print('------SERVER------');
+    print('------🖥️SERVER🖥️------');
   } catch (e) {
     print(e.toString());
   }
@@ -140,7 +163,12 @@ Future<String> checklastuserclick() async {
     print('------🟩-----');
     print('> di 24');
     print('------🟩-----');
-    reward_24();
+    await databases.updateDocument(
+      databaseId: dotenv.env['DB_ID'] ?? 'not found',
+      collectionId: dotenv.env['collectionid'] ?? 'not found',
+      documentId: userId,
+      data: {'timeByUser': savedDate},
+    );
     getuser();
 
     print('');
