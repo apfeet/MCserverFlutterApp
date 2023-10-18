@@ -19,6 +19,11 @@
 
 
 ```bash
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.1 <4.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
@@ -27,6 +32,11 @@ dependencies:
   appwrite: ^11.0.0
   dotenv: ^4.1.0
   flutter_dotenv: ^5.1.0
+  mc_rcon_dart: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
 ```
 👇 Flutter 👇
 
@@ -42,6 +52,7 @@ dependencies:
 
 - register/login
 - Cross platform
+- Rewards System
 - soon...
 
 
